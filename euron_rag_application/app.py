@@ -31,8 +31,8 @@ if not API_KEY:
 # -------------------------------
 # FAISS index paths
 # -------------------------------
-index_path = os.path.join(os.path.dirname(__file__), "..", "data", "my_index.index")
-metadata_path = os.path.join(os.path.dirname(__file__), "..", "data", "chunk_mapping.pkl")
+index_path = os.path.join(os.path.dirname(__file__), "data", "my_index.index")
+metadata_path = os.path.join(os.path.dirname(__file__), "data", "chunk_mapping.pkl")
 
 # -------------------------------
 # Load FAISS index
