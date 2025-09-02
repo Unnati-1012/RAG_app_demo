@@ -23,9 +23,9 @@ from utils.completion import generate_completion
 # Load environment variables
 # -------------------------------
 load_dotenv()
-API_KEY = os.getenv("GOOGLE_API_KEY")
+API_KEY = os.getenv("GEMINI_API_KEY")
 if not API_KEY:
-    st.error("❌ GOOGLE_API_KEY not found in .env file.")
+    st.error("❌ GEMINI_API_KEY not found in .env file.")
     st.stop()
 
 # -------------------------------
