@@ -23,7 +23,10 @@ from utils.completion import generate_completion
 # Load environment variables
 # -------------------------------
 # load_dotenv()
-API_KEY = "AIzaSyBjJhTBFNVRFP4dAIFYU22as02JMn6NltI"
+os.getenv("GEMINI_API_KEY")
+if not API_KEY:
+    st.error("❌ GEMINI_API_KEY not found in .env file.")
+    st.stop()
 
 # -------------------------------
 # FAISS index paths
