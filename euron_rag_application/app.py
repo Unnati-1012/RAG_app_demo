@@ -2,6 +2,7 @@
 import os
 import sys
 import streamlit as st
+from dotenv import load_dotenv
 
 # -------------------------------
 # Add project root to path
@@ -19,12 +20,27 @@ from utils.prompt import build_prompt
 from utils.completion import generate_completion
 
 # -------------------------------
-# Load FAISS index + chunk mapping
+# Load environment variables
+# -------------------------------
+load_dotenv()
+API_KEY = os.getenv("GOOGLE_API_KEY")
+if not API_KEY:
+    st.error("❌ GOOGLE_API_KEY not found in .env file.")
+    st.stop()
+
+# -------------------------------
+# FAISS index paths
+# -------------------------------
+index_path = os.path.join(os.path.dirname(__file__), "..", "data", "my_index.index")
+metadata_path = os.path.join(os.path.dirname(__file__), "..", "data", "chunk_mapping.pkl")
+
+# -------------------------------
+# Load FAISS index
 # -------------------------------
 try:
     index, chunk_mapping = load_faiss_index(
-        index_path="data/my_index.index",
-        metadata_path="data/chunk_mapping.pkl"
+        index_path=index_path,
+        metadata_path=metadata_path
     )
 except Exception as e:
     st.error(f"Failed to load FAISS index or chunk mapping: {e}")
@@ -74,7 +90,7 @@ if query:
 
             # 4️⃣ Generate completion
             try:
-                response = generate_completion(prompt)
+                response = generate_completion(prompt, api_key=API_KEY)
             except Exception as e:
                 st.error(f"⚠️ Gemini API Error: {e}")
 
