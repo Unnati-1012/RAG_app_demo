@@ -87,7 +87,7 @@ if query:
 
             # 4️⃣ Generate completion
             try:
-                response = generate_completion(prompt, api_key=API_KEY)
+                response = generate_completion(prompt=prompt)
             except Exception as e:
                 st.error(f"⚠️ Gemini API Error: {e}")
 
