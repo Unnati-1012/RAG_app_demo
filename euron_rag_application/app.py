@@ -2,7 +2,7 @@
 import os
 import sys
 import streamlit as st
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 # -------------------------------
 # Add project root to path
@@ -22,7 +22,7 @@ from utils.completion import generate_completion
 # -------------------------------
 # Load environment variables
 # -------------------------------
-load_dotenv()
+# load_dotenv()
 API_KEY = os.getenv("GEMINI_API_KEY")
 if not API_KEY:
     st.error("❌ GEMINI_API_KEY not found in .env file.")
