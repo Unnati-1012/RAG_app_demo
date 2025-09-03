@@ -2,7 +2,7 @@
 import os
 import sys
 import streamlit as st
-# from dotenv import load_dotenv
+from google import genai  # Gemini API client
 
 # -------------------------------
 # Add project root to path
@@ -17,16 +17,19 @@ if project_root not in sys.path:
 from utils.embedding import get_embedding
 from utils.retrieval import load_faiss_index, retrieve_chunks
 from utils.prompt import build_prompt
-from utils.completion import generate_completion
 
 # -------------------------------
-# Load environment variables
+# Load environment variable
 # -------------------------------
-# load_dotenv()
-os.getenv("GEMINI_API_KEY")
+API_KEY = os.getenv("GEMINI_API_KEY")
 if not API_KEY:
     st.error("❌ GEMINI_API_KEY not found in .env file.")
     st.stop()
+
+# -------------------------------
+# Initialize Gemini client once
+# -------------------------------
+client = genai.Client(api_key=API_KEY)
 
 # -------------------------------
 # FAISS index paths
@@ -44,7 +47,7 @@ try:
     )
 except Exception as e:
     st.error(f"Failed to load FAISS index or chunk mapping: {e}")
-    st.stop()  # Stop execution if index is not loaded
+    st.stop()
 
 # -------------------------------
 # Streamlit UI
@@ -55,7 +58,7 @@ st.write("Ask questions grounded in the life and mission of Sudhanshu Kumar.")
 # Debug info
 st.sidebar.write(f"🔍 FAISS index dimension: {index.d}")
 
-# Initialize variables to avoid NameError
+# Initialize variables
 response = None
 top_chunks = []
 
@@ -70,8 +73,7 @@ if query:
         query_embedding = get_embedding(query)
 
         # Debug info
-        st.sidebar.write(f"🧮 Query embedding shape: {len(query_embedding)}")
-        st.sidebar.write(f"⚖️ Query embedding dimension: {len(query_embedding)}")
+        st.sidebar.write(f"🧮 Query embedding dimension: {len(query_embedding)}")
 
         # Check dimension
         if len(query_embedding) != index.d:
@@ -88,9 +90,13 @@ if query:
             # 3️⃣ Build prompt
             prompt = build_prompt(top_chunks, query)
 
-            # 4️⃣ Generate completion
+            # 4️⃣ Generate completion using Gemini API
             try:
-                response = generate_completion(prompt=prompt)
+                response_obj = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=prompt
+                )
+                response = response_obj.text
             except Exception as e:
                 st.error(f"⚠️ Gemini API Error: {e}")
 
